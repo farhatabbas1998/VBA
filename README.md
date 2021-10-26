@@ -1,2 +1,3 @@
 # VBA
-#Just some program i wrote.
+#Just some program. It covers almost everything VBA Language has to offer.
+
