@@ -3,30 +3,28 @@
 'For Echobroadband
 'By Farhat Abbas
 
-Sub Main()
-    'Call WorkloadCCI
-    'Call SurroundingCCI
-    'Call WorkloadCommscope
-    'Call SurroundingCommscope
+Sub MainWorkload()
+    Workload.Show
 End Sub
 Sub WorkloadCCI()
+        Workload.Hide
     'Gethering Data
+        x = InputBox("Please enter number of date")
+        EDate = Date - x
+        PreviousDate = Format(EDate, "mm/dd/yyyy")
+        answer = MsgBox("Starting Date: " & PreviousDate, vbQuestion + vbYesNo + vbDefaultButton2, "Date Verification")
+        If answer = vbYes Then
+        Else
+        MsgBox "Exiting Program"
+        Exit Sub
+        End If
         filedate = Format(Date, "ddmmyyyy")
         OutputFileName = "CCI-Comcast Workload " & filedate & ".xlsx"
         Call Check_if_workbook_is_open(OutputFileName)
         Application.DisplayAlerts = False
         Workbooks.Add.SaveAs Filename:=ThisWorkbook.Path & "\" & OutputFileName
         Application.DisplayAlerts = True
-        DayName = Format(Date, "dddd")
-        If DayName = "Monday" Then
-            x = 3
-        End If
-        If DayName = "Tuesday" Or DayName = "Wednesday" Or DayName = "Thursday" Or DayName = "Friday" Then
-            x = 1
-        End If
-        EDate = Date - x
-        PreviousDate = Format(EDate, "mm/dd/yyyy")
-        MsgBox "Starting Date: " & PreviousDate
+
         Filename = ThisWorkbook.name
         
         
@@ -889,6 +887,7 @@ Sub WorkloadCCI()
         Workbooks(OutputFileName).Save
 End Sub
 Sub SurroundingCCI()
+        Workload.Hide
         filedate = Format(Date, "ddmmyyyy")
         OutputFileName = "CCI-Comcast Workload " & filedate & ".xlsx"
         TodayDate = Format(Date, "dd/m/yyyy")
@@ -1232,6 +1231,16 @@ Sub SurroundingCCI()
 End Sub
 Sub WorkloadCommscope()
     'Gethering Data
+        Workload.Hide
+        x = InputBox("Please enter number of date")
+        EDate = Date - x
+        PreviousDate = Format(EDate, "mm/dd/yyyy")
+        answer = MsgBox("Starting Date: " & PreviousDate, vbQuestion + vbYesNo + vbDefaultButton2, "Date Verification")
+        If answer = vbYes Then
+        Else
+        MsgBox "Exiting Program"
+        Exit Sub
+        End If
         filedate = Format(Date, "ddmmyyyy")
         OutputFileName = "Workload " & filedate & ".xlsx"
         Call Check_if_workbook_is_open(OutputFileName)
@@ -1239,15 +1248,6 @@ Sub WorkloadCommscope()
         Workbooks.Add.SaveAs Filename:=ThisWorkbook.Path & "\" & OutputFileName
         Application.DisplayAlerts = True
         DayName = Format(Date, "dddd")
-        If DayName = "Monday" Then
-            x = 3
-        End If
-        If DayName = "Tuesday" Or DayName = "Wednesday" Or DayName = "Thursday" Or DayName = "Friday" Then
-            x = 1
-        End If
-        EDate = Date - x
-        PreviousDate = Format(EDate, "mm/dd/yyyy")
-        MsgBox "Starting Date: " & PreviousDate
         Filename = ThisWorkbook.name
 
         
@@ -1273,7 +1273,7 @@ Sub WorkloadCommscope()
             Out3 = "G4"
             Out4 = "H4"
             Out5 = "I4"
-            Out6 = "L4"
+            Out6 = "M4"
             numofstatus = 2 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1284,10 +1284,6 @@ Sub WorkloadCommscope()
             Sheetname = "Comm+Res+Other Design" 'Data require form tracking sheet, Sheet name
             JobType = "<>*Comm Design*"
             Region = "California"
-            RegionColum = "D:D"
-            RegionColumNum = 4
-            ScopeColum = "E:E"
-            ScopeColumNum = 5
             DateColum = "AW:AW" 'Dilvery date
             DateColumNum = 49 'Dilvery date Column number
             Status1Colum = "AF:AF"
@@ -1301,7 +1297,7 @@ Sub WorkloadCommscope()
             Out3 = "G5"
             Out4 = "H5"
             Out5 = "I5"
-            Out6 = "L5"
+            Out6 = "M5"
             numofstatus = 2 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1331,7 +1327,7 @@ Sub WorkloadCommscope()
             Out3 = "G6"
             Out4 = "H6"
             Out5 = "I6"
-            Out6 = "L6"
+            Out6 = "M6"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1362,7 +1358,7 @@ Sub WorkloadCommscope()
             Out3 = "G7"
             Out4 = "H7"
             Out5 = "I7"
-            Out6 = "L7"
+            Out6 = "M7"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1393,7 +1389,7 @@ Sub WorkloadCommscope()
             Out3 = "G8"
             Out4 = "H8"
             Out5 = "I8"
-            Out6 = "L8"
+            Out6 = "M8"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1424,7 +1420,7 @@ Sub WorkloadCommscope()
             Out3 = "G9"
             Out4 = "H9"
             Out5 = "I9"
-            Out6 = "L9"
+            Out6 = "M9"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1451,7 +1447,7 @@ Sub WorkloadCommscope()
             Out3 = "G10"
             Out4 = "H10"
             Out5 = "I10"
-            Out6 = "L10"
+            Out6 = "M10"
             numofstatus = 1 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1475,7 +1471,7 @@ Sub WorkloadCommscope()
             Out3 = "G11"
             Out4 = "H11"
             Out5 = "I11"
-            Out6 = "L11"
+            Out6 = "M11"
             numofstatus = 1 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1500,7 +1496,7 @@ Sub WorkloadCommscope()
             Out3 = "G12"
             Out4 = "H12"
             Out5 = "I12"
-            Out6 = "L12"
+            Out6 = "M12"
             numofstatus = 1 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1527,7 +1523,7 @@ Sub WorkloadCommscope()
             Out3 = "G13"
             Out4 = "H13"
             Out5 = "I13"
-            Out6 = "L13"
+            Out6 = "M13"
             numofstatus = 2 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1558,7 +1554,7 @@ Sub WorkloadCommscope()
             Out3 = "G14"
             Out4 = "H14"
             Out5 = "I14"
-            Out6 = "L14"
+            Out6 = "M14"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1589,7 +1585,7 @@ Sub WorkloadCommscope()
             Out3 = "G15"
             Out4 = "H15"
             Out5 = "I15"
-            Out6 = "L15"
+            Out6 = "M15"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1620,7 +1616,7 @@ Sub WorkloadCommscope()
             Out3 = "G16"
             Out4 = "H16"
             Out5 = "I16"
-            Out6 = "L16"
+            Out6 = "M16"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1651,7 +1647,7 @@ Sub WorkloadCommscope()
             Out3 = "G17"
             Out4 = "H17"
             Out5 = "I17"
-            Out6 = "L17"
+            Out6 = "M17"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1682,7 +1678,7 @@ Sub WorkloadCommscope()
             Out3 = "G18"
             Out4 = "H18"
             Out5 = "I18"
-            Out6 = "L18"
+            Out6 = "M18"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1711,7 +1707,7 @@ Sub WorkloadCommscope()
             Out3 = "G19"
             Out4 = "H19"
             Out5 = "I19"
-            Out6 = "L19"
+            Out6 = "M19"
             numofstatus = 2 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1741,7 +1737,7 @@ Sub WorkloadCommscope()
             Out3 = "G20"
             Out4 = "H20"
             Out5 = "I20"
-            Out6 = "L20"
+            Out6 = "M20"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1768,7 +1764,7 @@ Sub WorkloadCommscope()
             Out3 = "G21"
             Out4 = "H21"
             Out5 = "I21"
-            Out6 = "L21"
+            Out6 = "M21"
             numofstatus = 1 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1794,7 +1790,7 @@ Sub WorkloadCommscope()
             Out3 = "G22"
             Out4 = "H22"
             Out5 = "I22"
-            Out6 = "L22"
+            Out6 = "M22"
             numofstatus = 2 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1824,7 +1820,7 @@ Sub WorkloadCommscope()
             Out3 = "G23"
             Out4 = "H23"
             Out5 = "I23"
-            Out6 = "L23"
+            Out6 = "M23"
             numofstatus = 3 ' Number of status, Status 1, 2 and 3 are counted, Status 4 is main status shouldnt be counted here
             DateColumA = "A:A" 'Date New Received
             DateColumANum = 1
@@ -1838,6 +1834,7 @@ Sub WorkloadCommscope()
         
 End Sub
 Sub SurroundingCommscope()
+        Workload.Hide
         filedate = Format(Date, "ddmmyyyy")
         OutputFileName = "Workload " & filedate & ".xlsx"
         TodayDate = Format(Date, "dd/m/yyyy")
@@ -1934,16 +1931,16 @@ Sub SurroundingCommscope()
         Next
 
         
-        .Range("E" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("E6:E" & FindlastemptyCell))
-        .Range("F" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("F6:F" & FindlastemptyCell))
-        .Range("G" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("G6:G" & FindlastemptyCell))
-        .Range("H" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("H6:H" & FindlastemptyCell))
-        .Range("I" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("I6:I" & FindlastemptyCell))
-        .Range("J" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("J6:J" & FindlastemptyCell))
-        .Range("K" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("K6:K" & FindlastemptyCell))
-        .Range("L" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("L6:L" & FindlastemptyCell))
-        .Range("M" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("M6:M" & FindlastemptyCell))
-        .Range("N" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("N6:N" & FindlastemptyCell)) 'Add here New column
+        .Range("E" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("E4:E" & FindlastemptyCell))
+        .Range("F" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("F4:F" & FindlastemptyCell))
+        .Range("G" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("G4:G" & FindlastemptyCell))
+        .Range("H" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("H4:H" & FindlastemptyCell))
+        .Range("I" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("I4:I" & FindlastemptyCell))
+        .Range("J" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("J4:J" & FindlastemptyCell))
+        .Range("K" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("K4:K" & FindlastemptyCell))
+        .Range("L" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("L4:L" & FindlastemptyCell))
+        .Range("M" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("M4:M" & FindlastemptyCell))
+        .Range("N" & TotalJob).FormulaR1C1 = WorksheetFunction.Sum(.Range("N4:N" & FindlastemptyCell)) 'Add here New column
         '----------------------------------------------------------
         
         
@@ -2629,7 +2626,5 @@ Sub RegionTitle(Filename, OutputFileName, Sheetname, PreviousDate, JobType, Regi
         Workbooks(Filename).Sheets(Sheetname).Range(DateColum).NumberFormat = "d-mmm"
 
 End Sub
-
-
 
 
