@@ -64,7 +64,7 @@ Sub CheckDataSheet(Filename)
     Workbooks(Filename).Sheets.Add.Name = "Claim"
 End Sub
 Sub Deletesheet1(Filename)
-    For Each Sheet In Workbooks(Filename).Worksheets ' Delete sheet1
+        For Each Sheet In Workbooks(Filename).Worksheets ' Delete All the sheet that is not "Claim"
         If Sheet.Name <> "Claim" Then
             Application.DisplayAlerts = False
             Sheet.Delete
