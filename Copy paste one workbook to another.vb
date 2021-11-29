@@ -1,21 +1,23 @@
-
-Sub Claim
+Sub Claim()
+        Application.DisplayAlerts = False
+        Application.ScreenUpdating = False
+        
 
         filedate = Format(Date, "ddmmyyyy")
         OutputFileName = "Claim " & filedate & ".csv"
         Call Check_if_workbook_is_open(OutputFileName)
-        Application.DisplayAlerts = False
+        
         Workbooks.Add.SaveAs Filename:=ThisWorkbook.Path & "\" & OutputFileName, FileFormat:=xlCSVUTF8, CreateBackup:=False
-        Application.DisplayAlerts = True
-        Filename = ThisWorkbook.name
+        Filename = ThisWorkbook.Name
         Sheetname = "Sheet1"
+        Claimsheet = "Claim"
 
-        CALL CheckDataSheet(Filename)
-        CALL Deletesheet1(Filename)
+        Call CheckDataSheet(OutputFileName)
+        Call Deletesheet1(OutputFileName)
         Dim wb As Workbook
         Dim ws As Worksheet
         Set wb = Workbooks(OutputFileName)
-        Set ws = wb.Sheets("Claim")
+        Set ws = wb.Sheets(Claimsheet)
         With ws
 
         .Range("A:A").FormulaR1C1 = Workbooks(Filename).Sheets(Sheetname).Range("A:A").Value
@@ -33,16 +35,19 @@ Sub Claim
         .Range("M:M").FormulaR1C1 = Workbooks(Filename).Sheets(Sheetname).Range("M:M").Value
 
 
-        End with
+        End With
         
-        Workbooks(OutputFileName).Worksheets("Sheet1").Columns("A:W").EntireColumn.AutoFit
+        Workbooks(OutputFileName).Worksheets(Claimsheet).Columns("A:W").EntireColumn.AutoFit
+        Workbooks(OutputFileName).Save
+        Application.DisplayAlerts = True
+        Application.ScreenUpdating = True
 End Sub
 
 
 Sub Check_if_workbook_is_open(OutputFileName)
     Dim wb As Workbook 'to test if workbook is open. No change here
         For Each wb In Workbooks
-            If wb.name = OutputFileName Then
+            If wb.Name = OutputFileName Then
                 Workbooks(OutputFileName).Save
                 Workbooks(OutputFileName).Close
             End If
@@ -50,17 +55,17 @@ Sub Check_if_workbook_is_open(OutputFileName)
 End Sub
 Sub CheckDataSheet(Filename)
     For Each Sheet In Workbooks(Filename).Worksheets ' Checking if VBA Sheet exist
-        If Sheet.name = "Claim" Then
+        If Sheet.Name = "Claim" Then
             Application.DisplayAlerts = False
             Sheet.Delete
             Application.DisplayAlerts = True
         End If
     Next Sheet
-    Workbooks(Filename).Sheets.Add.name = "Claim"
+    Workbooks(Filename).Sheets.Add.Name = "Claim"
 End Sub
 Sub Deletesheet1(Filename)
     For Each Sheet In Workbooks(Filename).Worksheets ' Delete sheet1
-        If Sheet.name = "Sheet1" Then
+        If Sheet.Name <> "Claim" Then
             Application.DisplayAlerts = False
             Sheet.Delete
             Application.DisplayAlerts = True
