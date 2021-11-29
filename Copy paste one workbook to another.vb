@@ -5,7 +5,7 @@ Sub Claim
         OutputFileName = "Claim " & filedate & ".csv"
         Call Check_if_workbook_is_open(OutputFileName)
         Application.DisplayAlerts = False
-        Workbooks.Add.SaveAs Filename:=ThisWorkbook.Path & "\" & OutputFileName, FileFormat:=xlCSV, CreateBackup:=False
+        Workbooks.Add.SaveAs Filename:=ThisWorkbook.Path & "\" & OutputFileName, FileFormat:=xlCSVUTF8, CreateBackup:=False
         Application.DisplayAlerts = True
         Filename = ThisWorkbook.name
         Sheetname = "Sheet1"
