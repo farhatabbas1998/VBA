@@ -4,11 +4,14 @@
 
 Sub Partimer_Billing()
 
+  Application.DisplayAlerts = False
+  Application.ScreenUpdating = False
  'Getting Data
   Dataws = "Billing_Partimer"
   Sparews = "Sparews"
   Masterwb = ThisWorkbook.Name
   Call CheckDataSheet(Masterwb, Sparews)
+  
  'Input Workbook is represented as wb
   Dim mwb As Workbook
   Set mwb = Workbooks(Masterwb)
@@ -41,10 +44,13 @@ Sub Partimer_Billing()
       .SortMethod = xlPinYin
       .Apply
   End With
+  
  'Storing into an arrays
   TotalProjects = WorksheetFunction.CountA(dws.Range("B:B")) - 2
   Namelists = WorksheetFunction.CountA(dws.Range("G:G")) - 1
   TotalEntires = WorksheetFunction.CountA(tws.Range("A:A")) - 1
+  Mini_Projects = WorksheetFunction.CountA(dws.Range("O:O")) - 1
+  
   
   Dim Store_Project(1000) As Variant
   Dim Task_Project(1000) As Variant
@@ -66,9 +72,16 @@ Sub Partimer_Billing()
   Dim ByodPrice4(1000) As Currency
   Dim ByodPrice5(1000) As Currency
   Dim ByodBollen(1000) As Variant
+  Dim NBIProjects(1000, 1000) As Variant
   Dim Total_Price(1000) As Currency
   Dim spac(1000) As Variant
   Dim ByodTotalPrice(1000) As Currency
+  Dim Mini_Project_Price(1000) As Currency
+  Dim Mini_Project_Details(1000) As Variant
+  Dim Total_MiniTask(1000) As Variant
+  Dim Total_MiniCount(1000) As Variant
+  Dim TotalUniqueID(1000) As Variant
+  
   
   For TotalProject = 1 To TotalProjects
     Store_Project(TotalProject) = dws.Cells(TotalProject + 4, 2).Value
@@ -81,6 +94,10 @@ Sub Partimer_Billing()
     BillingName_List(Namelist) = dws.Cells(Namelist + 4, 8).Value & dws.Cells(5, 12).Value
     ByodBollen(Namelist) = dws.Cells(Namelist + 4, 9).Value
   Next Namelist
+  For MiniProject = 1 To Mini_Projects
+    Mini_Project_Price(MiniProject) = dws.Cells(MiniProject + 4, 15).Value
+    Mini_Project_Details(MiniProject) = dws.Cells(MiniProject + 4, 14).Value
+  Next MiniProject
   
  'Creating Files
     tws.Columns("A:A").Copy
@@ -99,7 +116,7 @@ Sub Partimer_Billing()
             .Cells(3, 2).Value = "NO."
             .Cells(3, 3).Value = "NAME"
             .Cells(3, 4).Value = "DATE"
-            .Cells(3, 5).Value = "PROJECT"
+            .Cells(3, 5).Value = "PROJECT/SCOPE OF WORK"
             .Cells(3, 6).Value = "JOB ID"
             .Cells(3, 7).Value = "REMARKS"
             .Cells(3, 8).Value = "PRICE"
@@ -129,65 +146,102 @@ Sub Partimer_Billing()
  'Rearranging Data
   For TotalEntire = 1 To TotalEntires
     For TotalProject = 1 To TotalProjects
-      If Store_Project(TotalProject) = tws.Cells(TotalEntire + 1, 3).Value And Task_Project(TotalProject) = tws.Cells(TotalEntire + 1, 4).Value And Status_Project(TotalProject) = tws.Cells(TotalEntire + 1, 10).Value Then
+      If UCase(Store_Project(TotalProject)) = UCase(tws.Cells(TotalEntire + 1, 3).Value) And UCase(Task_Project(TotalProject)) = UCase(tws.Cells(TotalEntire + 1, 4).Value) And UCase(Status_Project(TotalProject)) = UCase(tws.Cells(TotalEntire + 1, 10).Value) Then
         For Namelist = 1 To Namelists
-          If Name_List(Namelist) = tws.Cells(TotalEntire + 1, 1).Value And tws.Cells(TotalEntire + 1, 3).Value <> "NBI" Then
-             Numbering(Namelist) = Numbering(Namelist) + 1
-             With Workbooks(BillingName_List(Namelist)).Sheets(1)
-               Dilverydate(Namelist) = tws.Cells(TotalEntire + 1, 2).Value
-               .Cells(Numbering(Namelist) + 3, 2).Value = Numbering(Namelist)
-               .Cells(Numbering(Namelist) + 3, 3).Value = Name_List(Namelist)
-               .Cells(Numbering(Namelist) + 3, 4).Value = tws.Cells(TotalEntire + 1, 2).Value
-               .Cells(Numbering(Namelist) + 3, 5).Value = tws.Cells(TotalEntire + 1, 3).Value
-               .Cells(Numbering(Namelist) + 3, 6).Value = tws.Cells(TotalEntire + 1, 6).Value
-               .Cells(Numbering(Namelist) + 3, 7).Value = tws.Cells(TotalEntire + 1, 16).Value
-               Call DetailTable(BillingName_List(Namelist), 1, Numbering(Namelist) + 3, 2, Numbering(Namelist) + 3, 8)
-               With .Rows(Numbering(Namelist) + 3)
-                 .HorizontalAlignment = xlCenter
-                 .VerticalAlignment = xlCenter
-                 .ReadingOrder = xlContext
-               End With
-               If tws.Cells(TotalEntire + 1, 11).Value <> "" Or tws.Cells(TotalEntire + 1, 12).Value <> "" Or tws.Cells(TotalEntire + 1, 13).Value <> "" Or tws.Cells(TotalEntire + 1, 14).Value <> "" Or tws.Cells(TotalEntire + 1, 15).Value <> "" Then
-                 Project_price = tws.Cells(TotalEntire + 1, 11).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 12).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 13).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 14).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 15).Value * Price_Project(TotalProject)
-                 .Cells(Numbering(Namelist) + 3, 8).Value = Project_price
-                 Total_Price(Namelist) = Total_Price(Namelist) + Project_price
-               ElseIf tws.Cells(TotalEntire + 1, 3).Value <> "NBI" Then
-                 Project_price = Price_Project(TotalProject)
-                 .Cells(Numbering(Namelist) + 3, 8).Value = Project_price
-                 Total_Price(Namelist) = Total_Price(Namelist) + Project_price
-               Else
-                 Project_price = 0
-                 Total_Price(Namelist) = 0
-               End If
-             'heilight based on date
-               If DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 6) Then
-                 Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 1)
-                 ByodWeek1(Namelist) = ByodWeek1(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
-                 ByodPrice5(Namelist) = ByodPrice1(Namelist) + Project_price
-               ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 7) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 13) Then
-                 Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 2)
-                 ByodWeek2(Namelist) = ByodWeek2(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
-                 ByodPrice2(Namelist) = ByodPrice2(Namelist) + Project_price
-               ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 14) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 20) Then
-                 Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 1)
-                 ByodWeek3(Namelist) = ByodWeek3(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
-                 ByodPrice3(Namelist) = ByodPrice3(Namelist) + Project_price
-               ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 21) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 27) Then
-                 Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 2)
-                 ByodWeek4(Namelist) = ByodWeek4(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
-                 ByodPrice4(Namelist) = ByodPrice4(Namelist) + Project_price
-               ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 28) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 34) Then
-                 Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 1)
-                 ByodWeek5(Namelist) = ByodWeek5(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
-                 ByodPrice5(Namelist) = ByodPrice5(Namelist) + Project_price
-               End If
-               .Columns("A").ColumnWidth = 0.88
-               .Columns("B").ColumnWidth = 6
-               .Columns("C:H").AutoFit
-            End With
-          ElseIf Name_List(Namelist) = tws.Cells(TotalEntire + 1, 1).Value And tws.Cells(TotalEntire + 1, 3).Value = "NBI" Then
-            Numbering(Namelist) = Numbering(Namelist) + 1
-            sws.Cells(Numbering(Namelist), Namelist).Value = tws.Cells(TotalEntire + 1, 6).Value
+          If UCase(Name_List(Namelist)) = UCase(tws.Cells(TotalEntire + 1, 1).Value) Then
+            If UCase(tws.Cells(TotalEntire + 1, 3).Value) <> "NBI" Then
+              Numbering(Namelist) = Numbering(Namelist) + 1
+              With Workbooks(BillingName_List(Namelist)).Sheets(1)
+                Dilverydate(Namelist) = tws.Cells(TotalEntire + 1, 2).Value
+                .Cells(Numbering(Namelist) + 3, 2).Value = Numbering(Namelist)
+                .Cells(Numbering(Namelist) + 3, 3).Value = Name_List(Namelist)
+                .Cells(Numbering(Namelist) + 3, 4).Value = tws.Cells(TotalEntire + 1, 2).Value
+                .Cells(Numbering(Namelist) + 3, 5).Value = tws.Cells(TotalEntire + 1, 3).Value
+                .Cells(Numbering(Namelist) + 3, 6).Value = tws.Cells(TotalEntire + 1, 6).Value
+                .Cells(Numbering(Namelist) + 3, 7).Value = tws.Cells(TotalEntire + 1, 16).Value
+                Call DetailTable(BillingName_List(Namelist), 1, Numbering(Namelist) + 3, 2, Numbering(Namelist) + 3, 8)
+                With .Rows(Numbering(Namelist) + 3)
+                  .HorizontalAlignment = xlCenter
+                  .VerticalAlignment = xlCenter
+                  .ReadingOrder = xlContext
+                End With
+                If tws.Cells(TotalEntire + 1, 11).Value <> "" Or tws.Cells(TotalEntire + 1, 12).Value <> "" Or tws.Cells(TotalEntire + 1, 13).Value <> "" Or tws.Cells(TotalEntire + 1, 14).Value <> "" Or tws.Cells(TotalEntire + 1, 15).Value <> "" Then
+                  Project_price = tws.Cells(TotalEntire + 1, 11).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 12).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 13).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 14).Value * Price_Project(TotalProject) + tws.Cells(TotalEntire + 1, 15).Value * Price_Project(TotalProject)
+                  .Cells(Numbering(Namelist) + 3, 8).Value = Project_price
+                  Total_Price(Namelist) = Total_Price(Namelist) + Project_price
+                ElseIf tws.Cells(TotalEntire + 1, 3).Value <> "NBI" Then
+                  Project_price = Price_Project(TotalProject)
+                  .Cells(Numbering(Namelist) + 3, 8).Value = Project_price
+                  Total_Price(Namelist) = Total_Price(Namelist) + Project_price
+                Else
+                  Project_price = 0
+                  Total_Price(Namelist) = 0
+                End If
+                'heilight based on date
+                If DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 6) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 1)
+                  ByodWeek1(Namelist) = ByodWeek1(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
+                  ByodPrice5(Namelist) = ByodPrice1(Namelist) + Project_price
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 7) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 13) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 2)
+                  ByodWeek2(Namelist) = ByodWeek2(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
+                  ByodPrice2(Namelist) = ByodPrice2(Namelist) + Project_price
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 14) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 20) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 1)
+                  ByodWeek3(Namelist) = ByodWeek3(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
+                  ByodPrice3(Namelist) = ByodPrice3(Namelist) + Project_price
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 21) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 27) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 2)
+                  ByodWeek4(Namelist) = ByodWeek4(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
+                  ByodPrice4(Namelist) = ByodPrice4(Namelist) + Project_price
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 28) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 34) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + 3, 1)
+                  ByodWeek5(Namelist) = ByodWeek5(Namelist) + tws.Cells(TotalEntire + 1, 9).Value
+                  ByodPrice5(Namelist) = ByodPrice5(Namelist) + Project_price
+                End If
+                .Columns("A").ColumnWidth = 0.88
+                .Columns("B").ColumnWidth = 6
+                .Columns("C:H").AutoFit
+              End With
+            ElseIf tws.Cells(TotalEntire + 1, 3).Value = "NBI" Then
+              If UCase(NBIProjects(TotalUniqueID(Namelist), Namelist)) <> UCase(tws.Cells(TotalEntire + 1, 6).Value) Then
+                With Workbooks(BillingName_List(Namelist)).Sheets(1)
+                  TotalUniqueID(Namelist) = TotalUniqueID(Namelist) + 1
+                  NBIProjects(TotalUniqueID(Namelist), Namelist) = tws.Cells(TotalEntire + 1, 6).Value
+                  For MiniProject = 1 To Mini_Projects
+                    Total_MiniCount(Namelist) = Total_MiniCount(Namelist) + 1
+                    Total_MiniTask(Namelist) = Total_MiniTask(Namelist) + Mini_Project_Price(MiniProject)
+                    .Cells(Total_MiniCount(Namelist) + 3, 2).Value = Total_MiniCount(Namelist)
+                    .Cells(Total_MiniCount(Namelist) + 3, 3).Value = Name_List(Namelist)
+                    .Cells(Total_MiniCount(Namelist) + 3, 4).Value = DateValue(tws.Cells(TotalEntire + 1, 2).Value)
+                    .Cells(Total_MiniCount(Namelist) + 3, 5).Value = Mini_Project_Details(MiniProject)
+                    .Cells(Total_MiniCount(Namelist) + 3, 6).Value = NBIProjects(TotalUniqueID(Namelist), Namelist)
+                    .Cells(Total_MiniCount(Namelist) + 3, 8).Value = Mini_Project_Price(MiniProject)
+                    Call DetailTable(BillingName_List(Namelist), 1, Total_MiniCount(Namelist) + 3, 2, Total_MiniCount(Namelist) + 3, 8)
+                    With .Rows(Total_MiniCount(Namelist) + 3)
+                    .HorizontalAlignment = xlCenter
+                    .VerticalAlignment = xlCenter
+                    .ReadingOrder = xlContext
+                    End With
+                'heilight based on date
+                If DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 6) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Total_MiniCount(Namelist) + 3, 1)
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 7) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 13) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Total_MiniCount(Namelist) + 3, 2)
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 14) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 20) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Total_MiniCount(Namelist) + 3, 1)
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 21) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 27) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Total_MiniCount(Namelist) + 3, 2)
+                ElseIf DateValue(tws.Cells(TotalEntire + 1, 2).Value) >= DateValue(dws.Cells(7, 12).Value + 28) And DateValue(tws.Cells(TotalEntire + 1, 2).Value) <= DateValue(dws.Cells(7, 12).Value + 34) Then
+                  Call ColorCode(BillingName_List(Namelist), "Sheet1", Total_MiniCount(Namelist) + 3, 1)
+                End If
+                .Columns("A").ColumnWidth = 0.88
+                .Columns("B").ColumnWidth = 6
+                .Columns("C:H").AutoFit
+                  Next MiniProject
+                End With
+              End If
+            End If
           End If
         Next Namelist
       End If
@@ -196,7 +250,7 @@ Sub Partimer_Billing()
   
  'Sum or Byod & Saving
     For Namelist = 1 To Namelists
-      If Numbering(Namelist) <> 0 Then
+      If Numbering(Namelist) <> 0 Or Total_MiniCount(Namelist) <> 0 Then
         If ByodWeek1(Namelist) >= 20 And ByodBollen(Namelist) = 1 And ByodPrice1(Namelist) >= 360 Then
           spac(Namelist) = 1 + spac(Namelist)
           ByodTotalPrice(Namelist) = ((ByodPrice1(Namelist) / 18) * 45) / 40
@@ -287,17 +341,21 @@ Sub Partimer_Billing()
    
         spac(Namelist) = 1 + spac(Namelist)
         With Workbooks(BillingName_List(Namelist)).Sheets(1)
-          .Cells(Numbering(Namelist) + spac(Namelist) + 3, 8).Value = Total_Price(Namelist)
-          .Cells(Numbering(Namelist) + spac(Namelist) + 3, 8).Font.Bold = True
+          .Cells(Numbering(Namelist) + Total_MiniCount(Namelist) + spac(Namelist) + 3, 8).Value = Total_Price(Namelist) + Total_MiniTask(Namelist)
+          .Cells(Numbering(Namelist) + Total_MiniCount(Namelist) + spac(Namelist) + 3, 8).Font.Bold = True
           .Columns("C:H").AutoFit
         End With
-        Call TotalTable(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + spac(Namelist) + 3, 8, Numbering(Namelist) + spac(Namelist) + 3, 8)
+        Call TotalTable(BillingName_List(Namelist), "Sheet1", Numbering(Namelist) + Total_MiniCount(Namelist) + spac(Namelist) + 3, 8, Numbering(Namelist) + Total_MiniCount(Namelist) + spac(Namelist) + 3, 8)
         Workbooks(BillingName_List(Namelist)).Save
       End If
-    Next
+    Next Namelist
     
-    'Call DeleteDataSheet(Masterwb, Sparews)
+    Call DeleteDataSheet(Masterwb, Sparews)
     Call Check_if_workbook_is_open(Trackingwb)
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    
+    
 End Sub
 Function StopAllFilters(Filename)
   Dim ws As Worksheet
@@ -443,5 +501,7 @@ Function ColorCode(Outputwb, Outputws, Rangeno, ColorType)
       End With
     End If
 End Function
+
+
 
 
